@@ -102,7 +102,7 @@ class OnePRScraper:
             return articles
         except requests.RequestException as e:
             print(f"Error fetching page {page_num}: {e}")
-            pass
+            continue
         
            # return []
 
