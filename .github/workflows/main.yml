@@ -1,0 +1,50 @@
+
+
+name: coupons # yml文件名https://blog.csdn.net/qq_44732432/article/details/124713585
+ 
+on:
+  push:
+  schedule:
+    - cron: "0 0,6,12,18 * * *" 
+jobs:
+  run-coupons: # 任务名
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main  #采用main分支下的
+           
+      - name: Set up Python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'          
+      - name: Install Dependency       
+        run: |
+          pip install beautifulsoup4
+          python update_articles.py
+          mkdir html/
+          cp index.html html/
+          cp articles.json html/
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+                apiToken: ${{ secrets.CF_TOKEN }}
+                accountId: ${{ secrets.CF_ID }}
+                projectName: oneprstudio-website
+                directory: html
+                wranglerVersion: '3'
+
+                
+      - name: Commit
+        env:
+          GIT_NAME: GitHub Actions[Bot]
+          GIT_EMAIL: map987@users.noreply.github.com
+        
+        run: |
+          git config --local user.name $GIT_NAME
+          git config --local user.email $GIT_EMAIL
+          git pull
+           
+          
+          git reset --mixed origin/main
+          git add .
+          git commit -m "Github action update at `date '+%Y-%m-%d %H:%M:%S'`."
+          git push
