@@ -196,13 +196,15 @@
     <div class="container">
         <div class="header">
             <input type="text" class="search-box" placeholder="搜索文章..." id="searchInput">
-            <div class="tags" id="tagFilter"></div>
+            
         </div>
         <div class="grid" id="content"></div>
         <div id="noResults">没有找到匹配的文章</div>
     </div>
 
     <script>
+    const MAX_VISIBLE_CARDS = 100;
+
     // 加载文章数据
     async function loadArticles() {
         try {
@@ -282,7 +284,7 @@
 
                 card.innerHTML = `
                     <div class="card-image">
-                        <img src="${article.image_url}" alt="${article.title}" loading="lazy">
+                        <img data-src="${article.image_url}" alt="${article.title}" loading="lazy">
                     </div>
                     <div class="card-content">
                         <h2 class="card-title">${article.title}</h2>
@@ -300,6 +302,25 @@
                 `;
                 content.appendChild(card);
             });
+
+            // 初始化懒加载
+            initLazyLoad();
+        }
+
+        function initLazyLoad() {
+            const images = document.querySelectorAll('.card-image img[data-src]');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('data-src');
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            images.forEach(img => observer.observe(img));
         }
 
         // 初始显示
@@ -316,5 +337,7 @@
     // 页面加载完成后初始化
     document.addEventListener('DOMContentLoaded', initPage);
     </script>
+    
+    <div class="tags" id="tagFilter"></div>
 </body>
-      </html>
+</html>
