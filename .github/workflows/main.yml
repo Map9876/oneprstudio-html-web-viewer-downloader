@@ -20,7 +20,7 @@ jobs:
         run: |
           pip install beautifulsoup4 requests
           python update_articles.py
-          mkdir html/
+          mkdir html/ 2> /dev/null/
           cp index.html html/
           cp articles.json html/
       - name: Publish to Cloudflare Pages
