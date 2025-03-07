@@ -80,7 +80,7 @@ class DataUpdater:
 
     def generate_readme(self, articles: List[Dict]):
         """生成README文件"""
-        readme_file = '/storage/emulated/0/oneprstudio/README.md'
+        readme_file = 'README.md'
         try:
             with open(readme_file, 'w', encoding='utf-8') as f:
                 f.write('# 每日游戏新闻更新\n\n')
