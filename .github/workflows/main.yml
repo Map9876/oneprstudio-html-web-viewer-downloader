@@ -18,7 +18,7 @@ jobs:
           python-version: '3.x'          
       - name: Install Dependency       
         run: |
-          pip install beautifulsoup4
+          pip install beautifulsoup4 requests
           python update_articles.py
           mkdir html/
           cp index.html html/
