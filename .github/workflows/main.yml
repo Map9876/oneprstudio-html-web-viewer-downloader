@@ -19,7 +19,11 @@ jobs:
       - name: Install Dependency       
         run: |
           pip install beautifulsoup4 requests
-          python update_articles.py
+      - name: run py
+        run: python update_articles.py
+        continue-on-error: true  # 忽略错误并继续执行后续步骤
+      - name: movie file to folder and upload to cloudflare pages
+        run: |
           mkdir html/ 2> /dev/null
           cp index.html html/
           cp articles.json html/
