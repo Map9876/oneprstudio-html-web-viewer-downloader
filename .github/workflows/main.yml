@@ -25,8 +25,8 @@ jobs:
       - name: movie file to folder and upload to cloudflare pages
         run: |
           mkdir html/ 2> /dev/null
-          cp index.html html/ || true
-          cp articles.json html/ || true
+          cp index.html html/ 2> /dev/null
+          cp articles.json html/ 2> /dev/null
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
