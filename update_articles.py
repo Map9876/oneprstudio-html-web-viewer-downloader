@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import json
 import os
 from typing import Dict, List
+import time
 from original_scraper import OnePRScraper
 from press_kit_scraper import PressKitScraper, EnhancedOnePRScraper
 
@@ -135,7 +136,11 @@ class DataUpdater:
                 }
                 new_articles.append(article_dict)
 
-            logging.info(f"Found {len(new_articles)} new articles")
+            # 记录抓取结果
+            if new_articles:
+                logging.info(f"Found {len(new_articles)} new articles")
+            else:
+                logging.warning("No new articles found. Continuing with existing data.")
 
             # 合并和保存数据
             self.merge_and_save_data(new_articles, existing_data)
@@ -143,6 +148,7 @@ class DataUpdater:
             # 生成README文件
             self.generate_readme(new_articles + existing_data)
 
+            # 无论是否有新文章，都返回成功
             return True
 
         except Exception as e:
