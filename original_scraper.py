@@ -1,6 +1,3 @@
-
-#2025-02-24 08:37:29        
-        
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timezone
@@ -9,7 +6,6 @@ import os
 from typing import Dict, List, Optional, Set
 import time
 from dataclasses import dataclass, asdict, field
-from datetime import timezone, timedelta
 
 @dataclass
 class Article:
@@ -23,7 +19,6 @@ class Article:
         return f"\nArticle:\n  Title: {self.title}\n  URL: {self.url}\n  Image: {self.image_url}\n  Published: {self.published_date}\n  Tags: {self.tags}"
 
 
-        
 class OnePRScraper:
     def __init__(self, base_url: str = "http://www.oneprstudio.com"):
         self.base_url = base_url
@@ -102,9 +97,7 @@ class OnePRScraper:
             return articles
         except requests.RequestException as e:
             print(f"Error fetching page {page_num}: {e}")
-            
-        
-            return []
+            return []  # 返回空列表，而不是让异常中断程序
 
     def get_new_articles(self) -> List[Article]:
         """获取所有新文章"""
@@ -114,9 +107,11 @@ class OnePRScraper:
         latest_date = None
         
         while True:
+            print(f"Fetching page {page_num}...")
             articles = self.get_articles_from_page(page_num)
             
             if not articles:
+                print(f"No articles found on page {page_num}. Stopping.")
                 break
                 
             # 更新最新的文章日期
@@ -129,25 +124,29 @@ class OnePRScraper:
                 
                 if last_scrape_date and article_date <= last_scrape_date:
                     # 如果找到已经抓取过的文章，停止搜索
+                    print("Found articles that were already scraped. Stopping.")
                     return new_articles
 
                 new_articles.append(article)
 
-            print(new_articles)
             # 防止过快请求
             time.sleep(1)
             page_num += 1
             if page_num > 3:
-                break #翻页获取，page_num > 2:为获取1页，10为获取9页
-            print(f"获取{page_num} 页中")
+                print("Reached the maximum number of pages to scrape. Stopping.")
+                break  # 翻页获取，page_num > 2: 为获取1页，10为获取9页
         
         # 保存最新的抓取日期
         if latest_date:
             self.save_last_scrape_data(latest_date)
-            """
-        print("\nCollected articles:")  # 添加收集到的文章列表
-        for idx, article in enumerate(new_articles, 1):
-            print(f"\n{idx}. {article}")
-            """
-
+        
+        print(f"Collected {len(new_articles)} new articles.")
         return new_articles
+
+
+# 示例用法
+if __name__ == "__main__":
+    scraper = OnePRScraper()
+    new_articles = scraper.get_new_articles()
+    for article in new_articles:
+        print(article)
