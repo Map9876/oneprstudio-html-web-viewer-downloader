@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 import json
 import os
 from typing import Dict, List
-import time
 from original_scraper import OnePRScraper
 from press_kit_scraper import PressKitScraper, EnhancedOnePRScraper
 
@@ -136,11 +135,7 @@ class DataUpdater:
                 }
                 new_articles.append(article_dict)
 
-            # 记录抓取结果
-            if new_articles:
-                logging.info(f"Found {len(new_articles)} new articles")
-            else:
-                logging.warning("No new articles found. Continuing with existing data.")
+            logging.info(f"Found {len(new_articles)} new articles")
 
             # 合并和保存数据
             self.merge_and_save_data(new_articles, existing_data)
@@ -148,21 +143,22 @@ class DataUpdater:
             # 生成README文件
             self.generate_readme(new_articles + existing_data)
 
-            # 无论是否有新文章，都返回成功
             return True
 
         except Exception as e:
             logging.error(f"Update process failed: {e}")
             return False
-
 def main():
     updater = DataUpdater()
-    success = updater.update()
-    
-    if success:
-        logging.info("Update completed successfully")
-    else:
-        logging.error("Update failed")
+    try:
+        success = updater.update()
+        if success:
+            logging.info("Update completed successfully")
+        else:
+            logging.error("Update failed")
+    except Exception as e:
+        logging.error(f"An error occurred during the update process: {e}")
+        logging.info("Continuing with the next steps...")
 
 if __name__ == "__main__":
     main()
