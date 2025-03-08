@@ -5,7 +5,7 @@ name: coupons # yml文件名https://blog.csdn.net/qq_44732432/article/details/12
 on:
   push:
   schedule:
-    - cron: "0 0,6,12,18 * * *" 
+    - cron: "0 0 * * *" 
 jobs:
   run-coupons: # 任务名
     runs-on: ubuntu-latest
@@ -25,8 +25,8 @@ jobs:
       - name: movie file to folder and upload to cloudflare pages
         run: |
           mkdir html/ 2> /dev/null
-          cp index.html html/
-          cp articles.json html/
+          cp index.html html/ || true
+          cp articles.json html/ || true
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
